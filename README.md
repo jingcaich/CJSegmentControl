@@ -17,7 +17,8 @@
 ##Setting Attibute 
 > use Manager class in .h
 
-``` @property (nonatomic, strong) CJSegmentViewAttManager *manager 
+``` 
+@property (nonatomic, strong) CJSegmentViewAttManager *manager 
 ```
-
-##欢迎各位使用,有问题欢迎pr, qq:519475439 蔡晶
+##最后
+欢迎各位使用,有问题欢迎pr, qq:519475439 蔡晶
