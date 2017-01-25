@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.homepage     = 'https://github.com/jingcaich/WeiBo-Segment-Control'
   s.platform     = :ios, '7.0'
   s.ios.deployment_target = '7.0'
-  s.source       = { :git => 'https://github.com/jingcaich/WeiBo-Segment-Control.git', :tag => s.version.to_s }
+  s.source       = { :git => 'https://github.com/jingcaich/WeiBo-Segment-Control.git', :commit => "be7d64ca96e77402aeb387df74e4e965808d6bbd" }
   
   s.requires_arc = true
   s.source_files = 'SegmentControl/*.{h,m}'
