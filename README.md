@@ -4,8 +4,9 @@
 ##Cocoapdos
 > pod 'CJSegmentControl'
 
+
 ##Sample
- ![image](https://github.com/jingcaich/WeiBo-Segment-Control/blob/master/seg.gif)
+ ![image](https://github.com/jingcaich/CJSegmentControl/blob/master/seg.gif)
                                                                                          
 
 
