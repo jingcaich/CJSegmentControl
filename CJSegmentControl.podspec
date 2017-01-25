@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'https://github.com/jingcaich/WeiBo-Segment-Control.git', :tag => s.version.to_s }
   
   s.requires_arc = true
-  s.source_files = 'SegmentControl/*.{h,m}'
-  s.public_header_files = 'SegmentControl/*.{h}'
+  s.source_files = 'SegmentControl/**/*.{h,m}'
+  s.public_header_files = 'SegmentControl/**/*.{h}'
 
   s.frameworks = 'UIKit'
 
