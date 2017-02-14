@@ -20,7 +20,7 @@
 
 @end
 
-@interface CJSegmentControl : UIView
+@interface CJSegmentControl : UIScrollView
 /**
  唯一的初始化方法
  

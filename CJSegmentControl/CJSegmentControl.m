@@ -10,7 +10,7 @@
 #import <mach/mach_time.h>
 
 #define COLOR_RGB(rgbValue,a) [UIColor colorWithRed:((float)(((rgbValue) & 0xFF0000) >> 16))/255.0 green:((float)(((rgbValue) & 0xFF00)>>8))/255.0 blue: ((float)((rgbValue) & 0xFF))/255.0 alpha:(a)]
-
+#define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 
 @implementation CJSegmentViewAttManager
 
@@ -20,6 +20,8 @@
 
 @interface CJTopButton : UIButton
 
+@property (nonatomic, strong) UIColor *normalTitleColor;
+@property (nonatomic, strong) UIColor *selectedTitleColor;
 
 @end
 
@@ -27,18 +29,27 @@
 
 - (instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
-        
+        _normalTitleColor = [UIColor darkGrayColor];
+        _selectedTitleColor = [UIColor blackColor];
         [self setTitleColor:[UIColor blackColor] forState:UIControlStateSelected];
         [self setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
         self.titleLabel.font = [UIFont systemFontOfSize:15];
+        self.titleLabel.numberOfLines = 0;
         
     }
     return self;
 }
 
+- (void)setSelected:(BOOL)selected{
+    NSLog(@"selected");
+    [self setTitleColor:selected ?_selectedTitleColor : _normalTitleColor forState:UIControlStateNormal];
+}
+
+
+
 - (void)resetNormalColor:(UIColor *)normalColor selectedColor:(UIColor *)selectedColor fontSize:(NSInteger)fontSize{
-    [self setTitleColor:selectedColor forState:UIControlStateSelected];
-    [self setTitleColor:selectedColor forState:UIControlStateNormal];
+    _normalTitleColor = normalColor;
+    _selectedTitleColor = selectedColor;
     self.titleLabel.font = [UIFont systemFontOfSize:fontSize];
 }
 
@@ -61,8 +72,12 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
 @property (nonatomic, assign) CGFloat averageWidth;
 @property (nonatomic, assign) CGFloat height;
 @property (nonatomic, assign) CGFloat buttonHeight;
-
 @property (nonatomic, strong) UIScrollView *scr;
+
+@property (nonatomic ,assign) BOOL isUserTap;
+//fake data
+
+
 @end
 
 @implementation CJSegmentControl
@@ -74,7 +89,11 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     if (self = [super initWithFrame:frame]) {
         _mutArr = @[].mutableCopy;
         src.bounces = NO;
-        _averageWidth = frame.size.width / titles.count;
+        _averageWidth = frame.size.width / titles.count + 50; // modify
+        self.contentSize = CGSizeMake(_averageWidth * titles.count, frame.size.height);
+        self.scrollEnabled = YES;
+        self.showsVerticalScrollIndicator = NO;
+        self.showsHorizontalScrollIndicator = NO;
         _height = frame.size.height;
         _buttonHeight = _height - kGradientViewHeight - 2 * kGradientViewGap;
         for (int i = 0; i < titles.count;i++) {
@@ -98,17 +117,26 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
 
 - (void)clickAction:(CJTopButton *)button{
     
+    _isUserTap = YES;
     if (_lastSelectedButton == button) return; //需求待定
-
-    [_scr setContentOffset:CGPointMake(_scr.frame.size.width * button.tag - 0.1, 0) animated:YES];
-    
+    _lastSelectedButton.selected = NO;
+    button.selected = YES;
+    _lastSelectedButton = button;
+    [self _adjustSelectedPosition];
+    NSLog(@"contentOffset: %lf",self.contentOffset.x);
+    [_scr setContentOffset:CGPointMake(_scr.frame.size.width * button.tag, 0) animated:NO];
+    CGFloat halfMargin = (_averageWidth - kGradientWidth) / 2.;
+    [UIView animateWithDuration:0.3 animations:^{
+        _progressLayer.frame = CGRectMake(_lastSelectedButton.tag *_averageWidth +halfMargin , _buttonHeight + kGradientViewGap, kGradientWidth, kGradientViewHeight);
+    }];
+    _isUserTap = NO;
 }
 
 
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
-    
+    if (_isUserTap) return;
     if (object == _scr) {
         
         CGPoint new = [change[NSKeyValueChangeNewKey] CGPointValue];
@@ -121,11 +149,13 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
             CJTopButton *btn = _mutArr[_lastSelectedButton.tag + 1];
             _lastSelectedButton = btn;
             btn.selected = YES;
+            [self _adjustSelectedPosition];
         }else if (new.x < (_lastSelectedButton.tag * _scr.frame.size.width - _scr.frame.size.width) + kScrollViewOffsetDeviation){
             _lastSelectedButton.selected = NO;
             CJTopButton *btn = _mutArr[_lastSelectedButton.tag - 1];
             _lastSelectedButton = btn;
             btn.selected = YES;
+            [self _adjustSelectedPosition];
         }
         
         CGFloat originX = _averageWidth * _lastSelectedButton.tag + halfMargin;
@@ -155,6 +185,29 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
         
         [CATransaction commit];
     }
+}
+#pragma mark - Private Methods
+
+- (void)_adjustSelectedPosition{
+    CGPoint currentPosition = _lastSelectedButton.frame.origin;
+    CGFloat gap = (self.frame.size.width - _averageWidth)/2.;
+    CGFloat correctX = currentPosition.x - gap;
+//    if (currentPosition.x > correctX) {
+//        correctX = currentPosition.x - gap;
+//    }else{
+//        
+//    }
+    NSLog(@"correctX : %lf",correctX);
+    if (correctX < 0) {
+        [self setContentOffset:CGPointMake(0, 0) animated:YES];
+        return;
+    }
+    if (currentPosition.x < correctX && correctX >= 0 ){
+        [self setContentOffset:CGPointMake(correctX, 0) animated:YES];
+    }else if ((correctX + self.frame.size.width - gap) < self.contentSize.width &&  currentPosition.x > correctX ){
+        [self setContentOffset:CGPointMake(correctX, 0) animated:YES];
+    }
+
 }
 
 #pragma mark - Getter & Setter
@@ -190,6 +243,7 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     return _progressLayer;
     
 }
+
 
 #pragma mark - Life Circle
 
