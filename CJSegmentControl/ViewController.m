@@ -23,7 +23,7 @@
     scr.pagingEnabled = YES;
     _scr = scr;
     CJSegmentControl *segementControl = [[CJSegmentControl alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, 30) titles:@[@"123",@"AAA",@"VVV",@"CCC",@"123",@"AAA",@"VVV",@"CCC"] selectionWidth:80 scr:_scr];
-    segementControl.backgroundColor = [UIColor cyanColor];
+    segementControl.backgroundColor = [UIColor whiteColor];
     segementControl.gradientOffset = -50;
     segementControl.gradientBottomMargin = 5;
     
