@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'CJSegmentControl'
-  s.summary      = 'A segmentControl like weibo using.'
-  s.version      = '1.0.2'
+  s.summary      = 'A segmentControl where Weibo using.'
+  s.version      = '1.1.0'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.authors      = { 'jingcaich' => 'jingcaich@gmail.com' }
   s.social_media_url = 'http://s.weibo.com/weibo/_Edward__C&Refer=STopic_box'
