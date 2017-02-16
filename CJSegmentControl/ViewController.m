@@ -22,8 +22,11 @@
     scr.delegate = self;
     scr.pagingEnabled = YES;
     _scr = scr;
-    CJSegmentControl *segementControl = [[CJSegmentControl alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, 30) titles:@[@"123",@"AAA",@"VVV",@"CCC",@"123",@"AAA",@"VVV",@"CCC"] selectionWidth:120 scr:_scr];
-    segementControl.backgroundColor = [UIColor greenColor];
+    CJSegmentControl *segementControl = [[CJSegmentControl alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, 30) titles:@[@"123",@"AAA",@"VVV",@"CCC",@"123",@"AAA",@"VVV",@"CCC"] selectionWidth:80 scr:_scr];
+    segementControl.backgroundColor = [UIColor cyanColor];
+    segementControl.gradientOffset = -50;
+    segementControl.gradientBottomMargin = 5;
+    
     scr.frame = CGRectMake(0, CGRectGetMaxY(segementControl.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(segementControl.frame));
     int titleCount = 8;
     scr.contentSize = CGSizeMake(scr.frame.size.width * titleCount, scr.frame.size.height);

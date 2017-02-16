@@ -8,20 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CJSegmentViewAttManager : NSObject
-
-// top buttons attributes
-@property (nonatomic, strong) UIColor *selectedColor;
-@property (nonatomic, strong) UIColor *normalColor;
-@property (nonatomic, assign) NSUInteger fontSize;
-
-// bottom line view attribute (CAGradientLayer *) kGradientselectionWidth
-@property (nonatomic, strong) NSArray<UIColor *> * gradientColors;
-
-@end
-
 @protocol CJSegmentControlDelegate <NSObject>
 
+/// (0 ~ titles count - 1)
 @optional
 - (void)segmentControlSelected:(NSInteger)tag;
 
@@ -29,14 +18,31 @@
 
 @interface CJSegmentControl : UIScrollView
 
-
-/// attribute manager
-@property (nonatomic, strong) CJSegmentViewAttManager *manager;
 /// delegate
 @property (nonatomic, weak  ) id<CJSegmentControlDelegate> cjDelegate;
 /// set index, default 0
 @property (nonatomic, assign) NSInteger index;
 
+/// top buttons attributes
+/// default black color
+@property (nonatomic, strong) UIColor *selectedColor;
+/// default lightGray color
+@property (nonatomic, strong) UIColor *normalColor;
+/// default 15
+@property (nonatomic, assign) CGFloat fontSize;
+
+/// bottom line view attribute (CAGradientLayer *)
+@property (nonatomic, strong) NSArray<UIColor *> * gradientColors;
+/// width , default 30
+@property (nonatomic, assign) CGFloat gradientWidth;
+/// height , default 3
+@property (nonatomic, assign) CGFloat gradientHeight;
+/// bottom margin , default 4
+@property (nonatomic, assign) CGFloat gradientBottomMargin;
+
+/// set gradientLayer auto postion adjust offset.
+/// default 0(center of self), >0 ==> move right, <0 ==> move left
+@property (nonatomic, assign) CGFloat gradientOffset;
 /**
  combine with UIScrollView
 
@@ -58,7 +64,7 @@
  */
 - (instancetype)initWithFrame:(CGRect)frame titles:(NSArray<NSString *>  *)titles selectionWidth:(CGFloat)selectionWidth;
 
-
+/// selection width
 @property (nonatomic, assign, readonly) CGFloat selectionWidth;
 /// indicator layer
 @property (nonatomic, strong, readonly) CAGradientLayer *progressLayer;

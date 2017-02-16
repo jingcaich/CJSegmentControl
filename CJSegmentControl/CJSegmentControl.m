@@ -11,12 +11,6 @@
 
 #define COLOR_RGB(rgbValue,a) [UIColor colorWithRed:((float)(((rgbValue) & 0xFF0000) >> 16))/255.0 green:((float)(((rgbValue) & 0xFF00)>>8))/255.0 blue: ((float)((rgbValue) & 0xFF))/255.0 alpha:(a)]
 
-@implementation CJSegmentViewAttManager
-
-
-
-@end
-
 @interface CJTopButton : UIButton
 
 @property (nonatomic, strong) UIColor *normalTitleColor;
@@ -45,19 +39,8 @@
 }
 
 
-
-- (void)resetNormalColor:(UIColor *)normalColor selectedColor:(UIColor *)selectedColor fontSize:(NSInteger)fontSize{
-    _normalTitleColor = normalColor;
-    _selectedTitleColor = selectedColor;
-    self.titleLabel.font = [UIFont systemFontOfSize:fontSize];
-}
-
 @end
 
-// gradient layer basic config
-CGFloat const kGradientViewHeight = 3;
-CGFloat const kGradientViewGap = 4;
-CGFloat const kGradientWidth = 30;
 CGFloat const kScrollViewOffsetDeviation = 10; //误差
 
 NSString * const kCJSegementViewContentOffset = @"contentOffset";
@@ -85,16 +68,20 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
 - (instancetype)initWithFrame:(CGRect)frame titles:(NSArray<NSString *>  *)titles selectionWidth:(CGFloat)selectionWidth scr:(UIScrollView *)src{
     
     if (self = [super initWithFrame:frame]) {
+        // basic config
         _mutArr = @[].mutableCopy;
-        
+        _gradientOffset = 0;
+        _gradientWidth = 30;
+        _gradientHeight = 3;
+        _gradientBottomMargin = 4;
+        _gradientColors = @[(id)COLOR_RGB(0xffaa91, 1).CGColor,(id)COLOR_RGB(0xff6000, 1).CGColor];
         _selectionWidth = selectionWidth;
         self.contentSize = CGSizeMake(_selectionWidth * titles.count, frame.size.height);
         self.scrollEnabled = YES;
         self.showsVerticalScrollIndicator = NO;
         self.showsHorizontalScrollIndicator = NO;
-        _height = frame.size.height;
-        _buttonHeight = _height - kGradientViewHeight - 2 * kGradientViewGap;
-        
+        _buttonHeight = frame.size.height - _gradientHeight - 2 * _gradientBottomMargin;
+        // add buttons
         for (int i = 0; i < titles.count;i++) {
             CJTopButton *titleButton = [[CJTopButton alloc] initWithFrame:CGRectMake(i * _selectionWidth, 0, _selectionWidth, _buttonHeight)];
             titleButton.userInteractionEnabled = YES;
@@ -105,8 +92,8 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
             if (0 == i) {_lastSelectedButton = titleButton;_lastSelectedButton.selected = YES;};
             [self addSubview:titleButton];
         }
-        
-        self.progressLayer.frame = CGRectMake((_selectionWidth - kGradientWidth) / 2., _buttonHeight + kGradientViewGap, kGradientWidth, kGradientViewHeight);
+        // add gradient layer
+        [self _adjustProgressLayerFrame];
         [self.layer addSublayer:self.progressLayer];
         
         _scr = src;
@@ -131,8 +118,7 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     [self _triggerDelegate];
     [self _adjustSelectedPosition];
     [_scr setContentOffset:CGPointMake(_scr.frame.size.width * button.tag, 0) animated:NO];
-    CGFloat halfMargin = (_selectionWidth - kGradientWidth) / 2.;
-    _progressLayer.frame = CGRectMake(_lastSelectedButton.tag *_selectionWidth +halfMargin , _buttonHeight + kGradientViewGap, kGradientWidth, kGradientViewHeight);
+    [self _adjustProgressLayerFrame];
     _isUserTap = NO;
 }
 
@@ -146,7 +132,7 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
         CGPoint new = [change[NSKeyValueChangeNewKey] CGPointValue];
         if (!_scr.dragging && new.x == 0) return;
         if (new.x < 0 || new.x > (_scr.contentSize.width - _scr.frame.size.width)) return;
-        CGFloat halfMargin = (_selectionWidth - kGradientWidth) / 2.;
+        CGFloat halfMargin = (_selectionWidth - _gradientWidth) / 2.;
         
         if ((new.x >= (_lastSelectedButton.tag  * _scr.frame.size.width + _scr.frame.size.width))) {
             _lastSelectedButton.selected = NO;
@@ -166,26 +152,27 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
         
         CGFloat originX = _selectionWidth * _lastSelectedButton.tag + halfMargin;
         CGFloat scrOriginX = _scr.frame.size.width * _lastSelectedButton.tag;
+        CGFloat layerY = self.frame.size.height - _gradientBottomMargin - _gradientHeight;
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         if (new.x >= scrOriginX) {
             CGFloat currentMidX = (_lastSelectedButton.tag * _scr.frame.size.width + _scr.frame.size.width / 2.);
             if (new.x >= currentMidX) {
                 CGFloat rate = (new.x - currentMidX) / (_scr.frame.size.width / 2.);
-                self.progressLayer.frame = CGRectMake( originX +  _selectionWidth + kGradientWidth , _buttonHeight + kGradientViewGap, - (kGradientWidth + (1 - rate) * _selectionWidth), kGradientViewHeight);
+                self.progressLayer.frame = CGRectMake( originX +  _selectionWidth + _gradientWidth , layerY, - (_gradientWidth + (1 - rate) * _selectionWidth), _gradientHeight);
             }else{
                 CGFloat rate = (currentMidX - new.x) / (_scr.frame.size.width / 2.);
-                self.progressLayer.frame = CGRectMake( originX  , _buttonHeight + kGradientViewGap, kGradientWidth + (1 - rate) * _selectionWidth, kGradientViewHeight);
+                self.progressLayer.frame = CGRectMake( originX  , layerY, _gradientWidth + (1 - rate) * _selectionWidth, _gradientHeight);
             }
         }
         else{
             CGFloat currentMidX = (_lastSelectedButton.tag * _scr.frame.size.width - _scr.frame.size.width / 2.);
             if (new.x > currentMidX) {
                 CGFloat rate = ( new.x - currentMidX) / (_scr.frame.size.width / 2.);
-                self.progressLayer.frame = CGRectMake( originX + kGradientWidth , _buttonHeight + kGradientViewGap, - (kGradientWidth + (1 - rate) * _selectionWidth), kGradientViewHeight);
+                self.progressLayer.frame = CGRectMake( originX + _gradientWidth , layerY, - (_gradientWidth + (1 - rate) * _selectionWidth), _gradientHeight);
             }else{
                 CGFloat rate =  (currentMidX -  new.x) / (_scr.frame.size.width / 2.);
-                self.progressLayer.frame = CGRectMake(originX - _selectionWidth, _buttonHeight + kGradientViewGap, (1-rate) * _selectionWidth + kGradientWidth, kGradientViewHeight);
+                self.progressLayer.frame = CGRectMake(originX - _selectionWidth, layerY, (1-rate) * _selectionWidth + _gradientWidth, _gradientHeight);
             }
         }
         
@@ -196,7 +183,7 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
 
 - (void)_adjustSelectedPosition{
     CGFloat gap = (self.frame.size.width - _selectionWidth)/2.;
-    CGFloat correctX = (_lastSelectedButton.tag ) * _selectionWidth - gap;
+    CGFloat correctX = (_lastSelectedButton.tag ) * _selectionWidth - gap - _gradientOffset;
 
     if (correctX < 0 ) {
         [self setContentOffset:CGPointMake(0, 0) animated:YES];
@@ -207,7 +194,6 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
         return;
     }
     [self setContentOffset:CGPointMake(correctX, 0) animated:YES];
-
 }
 
 
@@ -217,7 +203,27 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     }
 }
 
+- (void)_adjustProgressLayerFrame{
+    CGFloat halfMargin = (_selectionWidth - _gradientWidth) / 2.;
+    _progressLayer.frame = CGRectMake(_lastSelectedButton.tag *_selectionWidth +halfMargin , self.frame.size.height - _gradientBottomMargin - _gradientHeight, _gradientWidth, _gradientHeight);
+}
+
 #pragma mark - Getter & Setter
+
+- (void)setGradientBottomMargin:(CGFloat)gradientBottomMargin{
+    _gradientBottomMargin = gradientBottomMargin;
+    [self _adjustProgressLayerFrame];
+}
+
+- (void)setGradientWidth:(CGFloat)gradientWidth{
+    _gradientWidth = gradientWidth;
+    [self _adjustProgressLayerFrame];
+}
+
+- (void)setGradientHeight:(CGFloat)gradientHeight{
+    _gradientHeight = gradientHeight;
+    [self _adjustProgressLayerFrame];
+}
 
 - (void)setIndex:(NSInteger)index{
     _index = index;
@@ -226,14 +232,32 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     [self clickAction:btn];
 }
 
-- (void)setManager:(CJSegmentViewAttManager *)manager{
-    _manager = manager;
+- (void)setFontSize:(CGFloat)fontSize{
+    _fontSize = fontSize;
     for (CJTopButton *button in _mutArr) {
-        [button  resetNormalColor:manager.normalColor selectedColor:manager.normalColor fontSize:manager.fontSize];
+        button.titleLabel.font = [UIFont systemFontOfSize:fontSize];
     }
-    if (manager.gradientColors.count) {
+}
+
+- (void)setNormalColor:(UIColor *)normalColor{
+    _normalColor = normalColor;
+    for (CJTopButton *button in _mutArr) {
+        button.normalTitleColor = normalColor;
+    }
+}
+
+- (void)setSelectedColor:(UIColor *)selectedColor{
+    _selectedColor = selectedColor;
+    for (CJTopButton *button in _mutArr) {
+        button.selectedTitleColor = selectedColor;
+    }
+}
+
+- (void)setGradientColors:(NSArray<UIColor *> *)gradientColors{
+    _gradientColors = gradientColors;
+    if (gradientColors.count) {
         NSMutableArray *mut = @[].mutableCopy;
-        for (UIColor *color in manager.gradientColors) {
+        for (UIColor *color in gradientColors) {
             NSAssert([color isKindOfClass:[UIColor class]], @"please use UIColor type");
             [mut addObject:(id)color.CGColor];
         }
@@ -241,12 +265,11 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
     }
 }
 
-
 - (CAGradientLayer *)progressLayer{
     
     if (!_progressLayer) {
         _progressLayer = [CAGradientLayer layer];
-        _progressLayer.colors = @[(id)COLOR_RGB(0xffaa91, 1).CGColor,(id)COLOR_RGB(0xff6000, 1).CGColor];
+        _progressLayer.colors = _gradientColors;
         _progressLayer.startPoint = CGPointMake(0, 0.5);
         _progressLayer.endPoint = CGPointMake(1, 0.5);
         _progressLayer.frame = self.bounds;
