@@ -13,7 +13,7 @@
 		BD20BB2A1E384C8900455836 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD20BB291E384C8900455836 /* Assets.xcassets */; };
 		BD20BB2D1E384C8900455836 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD20BB2B1E384C8900455836 /* LaunchScreen.storyboard */; };
 		BD20BB3C1E384CA000455836 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD20BB3B1E384CA000455836 /* ViewController.m */; };
-		BD20BB421E387C8000455836 /* CJSegmentControl.m in Sources */ = {isa = PBXBuildFile; fileRef = BD20BB411E387C8000455836 /* CJSegmentControl.m */; };
+		BD3A99891E5685510089104B /* CJSegmentControl.m in Sources */ = {isa = PBXBuildFile; fileRef = BD3A99881E5685510089104B /* CJSegmentControl.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +27,8 @@
 		BD20BB2E1E384C8900455836 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD20BB3A1E384CA000455836 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		BD20BB3B1E384CA000455836 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		BD20BB401E387C8000455836 /* CJSegmentControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJSegmentControl.h; sourceTree = "<group>"; };
-		BD20BB411E387C8000455836 /* CJSegmentControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJSegmentControl.m; sourceTree = "<group>"; };
+		BD3A99871E5685510089104B /* CJSegmentControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CJSegmentControl.h; path = SegmentControl/CJSegmentControl.h; sourceTree = SOURCE_ROOT; };
+		BD3A99881E5685510089104B /* CJSegmentControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CJSegmentControl.m; path = SegmentControl/CJSegmentControl.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,8 +65,8 @@
 				BD20BB211E384C8900455836 /* AppDelegate.m */,
 				BD20BB3A1E384CA000455836 /* ViewController.h */,
 				BD20BB3B1E384CA000455836 /* ViewController.m */,
-				BD20BB401E387C8000455836 /* CJSegmentControl.h */,
-				BD20BB411E387C8000455836 /* CJSegmentControl.m */,
+				BD3A99871E5685510089104B /* CJSegmentControl.h */,
+				BD3A99881E5685510089104B /* CJSegmentControl.m */,
 				BD20BB261E384C8900455836 /* Main.storyboard */,
 				BD20BB291E384C8900455836 /* Assets.xcassets */,
 				BD20BB2B1E384C8900455836 /* LaunchScreen.storyboard */,
@@ -156,8 +156,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD20BB221E384C8900455836 /* AppDelegate.m in Sources */,
-				BD20BB421E387C8000455836 /* CJSegmentControl.m in Sources */,
 				BD20BB1F1E384C8900455836 /* main.m in Sources */,
+				BD3A99891E5685510089104B /* CJSegmentControl.m in Sources */,
 				BD20BB3C1E384CA000455836 /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
