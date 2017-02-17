@@ -9,8 +9,10 @@
 #import "ViewController.h"
 #import "CJSegmentControl.h"
 
-@interface ViewController ()<UIScrollViewDelegate>
+@interface ViewController ()<UIScrollViewDelegate,CJSegmentControlDelegate>
+
 @property (nonatomic, weak  ) UIScrollView *scr;
+@property (nonatomic, weak  ) CJSegmentControl *segementControl;
 
 @end
 
@@ -18,14 +20,31 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    CJSegmentControl *singleSegementControl = [[CJSegmentControl alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 35) titles:@[@"选我",@"快选我",@"快点选我",@"选项1",@"选项1",@"选项1",@"选项1",@"拳打镇关西"] selectionWidth:100];
+    singleSegementControl.gradientColors = @[[UIColor redColor],[UIColor cyanColor]];
+    singleSegementControl.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1.];
+    singleSegementControl.fontSize = 13;
+    singleSegementControl.normalColor = [UIColor whiteColor];
+    singleSegementControl.selectedColor = [UIColor redColor];
+    singleSegementControl.gradientBottomMargin = 8;
+    singleSegementControl.gradientOffset = 50;
+    singleSegementControl.cjDelegate = self;
+   [self.view addSubview:singleSegementControl];
 
     CJSegmentControl *segementControl = [[CJSegmentControl alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, 30) titles:@[@"123",@"AAA",@"VVV",@"CCC",@"123",@"AAA",@"VVV",@"CCC"] selectionWidth:80 scr:self.scr];
     segementControl.backgroundColor = [UIColor whiteColor];
     segementControl.gradientOffset = -50;
     segementControl.gradientBottomMargin = 5;
-    
+    _segementControl = segementControl;
     [self.view  addSubview:segementControl];
+    
+    singleSegementControl.index = 3;
+
     // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)segmentControlSelected:(NSInteger)tag{
+    [_segementControl setIndex:tag];
 }
 
 - (UIScrollView *)scr{

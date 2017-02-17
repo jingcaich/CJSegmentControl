@@ -38,6 +38,16 @@
     [self setTitleColor:selected ?_selectedTitleColor : _normalTitleColor forState:UIControlStateNormal];
 }
 
+- (void)setNormalTitleColor:(UIColor *)normalTitleColor{
+    _normalTitleColor = normalTitleColor;
+    [self setTitleColor:_normalTitleColor forState:UIControlStateNormal];
+
+}
+
+- (void)setSelectedTitleColor:(UIColor *)selectedTitleColor{
+    _selectedTitleColor = selectedTitleColor;
+    [self setTitleColor:_selectedTitleColor forState:UIControlStateSelected];    
+}
 
 @end
 
@@ -205,7 +215,7 @@ NSString * const kCJSegementViewContentOffset = @"contentOffset";
 
 - (void)_adjustProgressLayerFrame{
     CGFloat halfMargin = (_selectionWidth - _gradientWidth) / 2.;
-    _progressLayer.frame = CGRectMake(_lastSelectedButton.tag *_selectionWidth +halfMargin , self.frame.size.height - _gradientBottomMargin - _gradientHeight, _gradientWidth, _gradientHeight);
+    self.progressLayer.frame = CGRectMake(_lastSelectedButton.tag *_selectionWidth +halfMargin , self.frame.size.height - _gradientBottomMargin - _gradientHeight, _gradientWidth, _gradientHeight);
 }
 
 #pragma mark - Getter & Setter
