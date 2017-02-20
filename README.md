@@ -1,7 +1,7 @@
 # WeiBo-Segment-Control
 模仿微博iOS App的选项滑动功能(觉得比较有意思，就花了一个下午做了下)
 
-##Cocoapdos
+##Cocoapods
 > pod 'CJSegmentControl'
 
 ##Update history
