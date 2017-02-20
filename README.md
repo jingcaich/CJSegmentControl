@@ -1,4 +1,5 @@
 # WeiBo-Segment-Control
+[![CocoaPods](https://img.shields.io/cocoapods/v/AFNetworking.svg)](http://shields.io/)
 模仿微博iOS App的选项滑动功能(觉得比较有意思，就花了一个下午做了下)
 
 ##Cocoapods
